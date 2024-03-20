@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+participant Frontend
+participant ApplicationDjangoBackend
+database ApplicationDB
+queue RabbitMQ
+autonumber
+
+== Create Application Process ==
+alt result=True
+Frontend -> ApplicationDjangoBackend: HTTP: POST /applications
+note left
+<:key:> = This endpoint uses Authorization Header
+end note
+ApplicationDjangoBackend --> ApplicationDB: << Save Application >>
+ApplicationDB --> ApplicationDjangoBackend: << Created Application>>
+ApplicationDjangoBackend -> Frontend: <Created Application(status IN PROCESS)>
+end
+alt result=False
+Frontend -> ApplicationDjangoBackend: HTTP: POST /applications
+ApplicationDjangoBackend --> ApplicationDB: << Save Application >>
+ApplicationDB --> ApplicationDjangoBackend: << ResourceID not found>>
+ApplicationDjangoBackend -> Frontend: NOT_FOUND_404
+end
+
+== Confirm Application ==
+alt result=True
+Frontend -> ApplicationDjangoBackend: HTTP: PATCH /confirm/<applicationID>
+ApplicationDjangoBackend --> ApplicationDjangoBackend: Check User Permissions
+ApplicationDjangoBackend --> ApplicationDB: << Update Application  Status>>
+ApplicationDB --> ApplicationDjangoBackend: << Updated Application >>
+ApplicationDjangoBackend --> RabbitMQ: <<create ApplicationApprovedEvent>>
+ApplicationDjangoBackend -> Frontend: HTTP 200
+end
+alt result=False
+Frontend -> ApplicationDjangoBackend: HTTP: PATCH /confirm/<applicationID>
+ApplicationDjangoBackend -> Frontend: HTTP_FORBIDDEN_403
+ApplicationDjangoBackend --> ApplicationDjangoBackend : Check User permissions
+
+end
+
+@enduml
