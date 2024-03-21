@@ -1,3 +1,4 @@
+from .invitation_token import InvitationToken
 from .user import User
 from .user_role import UserRole
 from .position import Position
@@ -14,5 +15,6 @@ __all__ = [
     "Application",
     "Resource",
     "ResourceGroup",
-    "Grant"
+    "Grant",
+    "InvitationToken"
 ]

@@ -61,6 +61,7 @@ class GrantAdmin(admin.ModelAdmin):
     )
     list_filter = (
         "status",
+        "resource__resource_group"
     )
 
 

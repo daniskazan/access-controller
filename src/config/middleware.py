@@ -35,8 +35,12 @@ class SqlPrintingMiddleware(object):
 
             sql_times.append(total_time)
             logger.info(
-                f"[{tag}] \033[1;32m[" f"TOTAL TIME: {total_time} seconds, QUERIES: {total_queries}" f"]\033[0m"
+                f"[{tag}] \033[1;32m["
+                f"TOTAL TIME: {total_time} seconds, QUERIES: {total_queries}"
+                f"]\033[0m"
             )
             logger.info(f"\033[1;32m[{sql_times}]\033[0m")
-            logger.info(f"\033[1;32mCount: {len(sql_times)}. Average = {sum(sql_times)/len(sql_times)}\033[0m")
+            logger.info(
+                f"\033[1;32mCount: {len(sql_times)}. Average = {sum(sql_times)/len(sql_times)}\033[0m"
+            )
         return response
