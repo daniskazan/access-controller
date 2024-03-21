@@ -12,8 +12,8 @@ EMAIL_BACKEND = os.environ.get(
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.yandex.ru")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", 465)
 EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", True)
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "jelly979@yandex.ru")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "lbsopnrdzqyndgik")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", None)
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", None)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -205,4 +205,4 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "local")
-BASE_FRONTEND_HOST = os.environ.get("BASE_FRONTEND_HOST", "localhost:5432")
+BASE_FRONTEND_HOST = os.environ.get("BASE_FRONTEND_HOST", "127.0.0.1:5432")
