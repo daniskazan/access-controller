@@ -10,6 +10,5 @@ class ChangeApplicationPermission(IsAuthenticated):
 
     def has_object_permission(self, request, view, obj: Application):
         user = request.user
-        has = user.has_perm("core.can_approve_applicationjj")
+        has = user.has_perm("core.can_approve_application")
         return has
-        # return obj.confirm_by == request.user

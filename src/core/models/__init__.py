@@ -16,5 +16,5 @@ __all__ = [
     "Resource",
     "ResourceGroup",
     "Grant",
-    "InvitationToken"
+    "InvitationToken",
 ]

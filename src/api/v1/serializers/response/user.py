@@ -5,6 +5,14 @@ from api.v1.serializers.response.team import TeamSerializer
 from core.models import User
 
 
+class UserAcceptInviteResponseSerializer(serializers.ModelSerializer):
+    team = TeamSerializer()
+
+    class Meta:
+        model = User
+        fields = ("id", "email", "first_name", "last_name", "team")
+
+
 class UserRegistrationSerializerOutput(serializers.ModelSerializer):
     class Meta:
         model = User

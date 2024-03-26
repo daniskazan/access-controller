@@ -27,6 +27,12 @@ class ApplicationApprovedEvent:
     status: int
 
 
+@dataclass
+class GrantActivatedEvent:
+    grant_id: int
+    application_id: int
+
+
 class ApplicationViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
@@ -41,11 +47,6 @@ class ApplicationViewSet(
             Application.objects.select_related("confirm_by", "resource")
             .order_by("created_at")
             .all()
-        )
-
-    def filter_queryset(self, queryset):
-        return queryset.filter(
-            Q(user=self.request.user) | Q(confirm_by=self.request.user)
         )
 
     def get_serializer_class(self):

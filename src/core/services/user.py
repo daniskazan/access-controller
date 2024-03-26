@@ -9,11 +9,11 @@ from core.utils import get_frontend_host
 
 class UserInviteService:
     def __init__(
-            self,
-            *,
-            user: User,
-            request: Request,
-            invitation_token: InvitationToken,
+        self,
+        *,
+        user: User,
+        request: Request,
+        invitation_token: InvitationToken,
     ):
         self.user: User = user
         self.request: Request = request
@@ -32,5 +32,5 @@ class UserInviteService:
                 "mailing/send_invite.html",
                 context={"user": self.user, "invitation_link": invite_link},
             ),
-            recipients_email=[self.user.email]
+            recipients_email=[self.user.email],
         )

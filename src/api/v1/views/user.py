@@ -1,9 +1,13 @@
 import uuid
 from datetime import datetime, timedelta
 from django.db import transaction
+from drf_spectacular import openapi
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
 from rest_framework import mixins
 from rest_framework import viewsets
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -12,7 +16,8 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import User, InvitationToken
 from api.v1.serializers.request.user import (
     UserInviteSerializer,
-    UserAcceptInviteSerializer
+    GetTokenStatusSerializer,
+    UserAcceptInviteSerializer,
 )
 from api.v1.serializers.response.user import (
     UserRegistrationSerializerOutput,
@@ -31,16 +36,13 @@ class UserViewSet(
         return User.objects.prefetch_related("team", "role", "position").order_by("id")
 
     def get_permissions(self):
-        if self.action in (
-                "accept_invite",
-                "invite"
-        ):
+        if self.action in ("get_invite_token_status", "accept_invite", "invite"):
             return [AllowAny()]
         return [IsAuthenticated()]
 
     def get_serializer_class(self):
-        if self.action == "invite":
-            return UserInviteSerializer
+        if self.action == "get_invite_token_status":
+            return GetTokenStatusSerializer
         if self.action == "accept_invite":
             return UserAcceptInviteSerializer
         return UserFullOutputSerializer
@@ -65,15 +67,35 @@ class UserViewSet(
 
         return Response(data=serializer.data)
 
-    @action(
-        methods=["POST"],
-        detail=False
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "invite_token", OpenApiTypes.UUID, OpenApiParameter.QUERY, required=True
+            )
+        ]
     )
-    def accept_invite(self, request: Request):
-        serializer: UserAcceptInviteSerializer = self.get_serializer(data=request.data)
+    @action(methods=["GET"], detail=False, url_path="invite-token/status")
+    def get_invite_token_status(self, request: Request):
+        serializer: GetTokenStatusSerializer = self.get_serializer(
+            data=request.query_params
+        )
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response(serializer.to_representation(instance=user), status=status.HTTP_200_OK)
+        return Response(
+            serializer.to_representation(instance=user), status=status.HTTP_200_OK
+        )
+
+    @action(methods=["POST"], detail=False, url_path="invite/accept")
+    def accept_invite(self, request: Request):
+        serializer: UserAcceptInviteSerializer = self.get_serializer(
+            data=request.data, instance=get_object_or_404(User, id=request.data["id"])
+        )
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        return Response(
+            data=serializer.to_representation(user), status=status.HTTP_200_OK
+        )
 
     @action(methods=["GET"], detail=False)
     def me(self, request: Request):

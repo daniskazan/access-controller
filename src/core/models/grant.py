@@ -5,9 +5,16 @@ from core.enums.grant import GrantStatus
 
 
 class Grant(CreatedAtUpdatedAtMixin, models.Model):
-    user = models.ForeignKey("User", null=False, related_name="grants", on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(
+        "User", null=False, related_name="grants", on_delete=models.DO_NOTHING
+    )
     resource = models.ForeignKey("Resource", null=False, on_delete=models.DO_NOTHING)
-    status = models.CharField(choices=GrantStatus.choices, default=GrantStatus.PENDING, max_length=128)
+    status = models.CharField(
+        choices=GrantStatus.choices, default=GrantStatus.PENDING, max_length=128
+    )
+    application = models.OneToOneField(
+        to="Application", on_delete=models.SET_NULL, null=True
+    )
 
     class Meta:
         verbose_name = "право доступа"

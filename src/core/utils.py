@@ -17,7 +17,7 @@ def get_host(request, with_protocol=False, domain=None):
 
 def build_frontend_host(host):
     if settings.ENVIRONMENT == "local":
-        return settings.BASE_FRONTEND_HOST
+        return f"http://{settings.BASE_FRONTEND_HOST}"
     """Split the client's domain at the third level and connect it to an external host."""
     return f"{host.split('.')[0]}.{settings.BASE_FRONTEND_HOST}"
 

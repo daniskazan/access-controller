@@ -42,14 +42,24 @@ class Consumer:
         print(" [x] Received %r" % json.loads(body))
         body = json.loads(body)
         create_grant_to_proccess(
-            user_id=body["user_id"], resource_id=body["resource_id"]
+            user_id=body["user_id"],
+            resource_id=body["resource_id"],
+            application_id=body["application_id"],
         )
+
+    def callback_on_application_resolved(self):
+        pass
 
     def run(self):
         self.channel.basic_consume(
             queue=EventType.APPLICATION_APPROVED,
             on_message_callback=self.callback_on_application_approved_status,
-            auto_ack=True
+            auto_ack=True,
+        )
+        self.channel.basic_consume(
+            queue=EventType.APPLICATION_RESOLVED,
+            on_message_callback=self.callback_on_application_resolved,
+            auto_ack=True,
         )
         self.channel.start_consuming()
 

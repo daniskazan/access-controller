@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from core import mixins
 from core.enums.user import UserInvitationStatusChoice
 
+
 class User(mixins.CreatedAtUpdatedAtMixin, AbstractUser):
     date_joined = None
 
@@ -24,7 +25,11 @@ class User(mixins.CreatedAtUpdatedAtMixin, AbstractUser):
         null=True,
         related_name="users",
     )
-    invite_status = models.CharField(max_length=64, choices=UserInvitationStatusChoice.choices, default=UserInvitationStatusChoice.PENDING)
+    invite_status = models.CharField(
+        max_length=64,
+        choices=UserInvitationStatusChoice.choices,
+        default=UserInvitationStatusChoice.PENDING,
+    )
     is_tenant_admin = models.BooleanField(default=False)
 
     class Meta:

@@ -11,6 +11,6 @@ class ResourceViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
 ):
     filter_backends = [filters.SearchFilter]
-    search_fields = ["resource_group__name"]
+    search_fields = ["resource_group__name", "name"]
     queryset = Resource.objects.all().order_by("id")
     serializer_class = ResourceSerializer

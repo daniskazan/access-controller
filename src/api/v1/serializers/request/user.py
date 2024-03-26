@@ -5,16 +5,21 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
+from api.v1.serializers.response.team import TeamSerializer
+from api.v1.serializers.response.user import UserAcceptInviteResponseSerializer
 from core.models import User, InvitationToken
 from core.enums.user import UserInvitationStatusChoice
 
 
-class UserAcceptInviteSerializer(serializers.Serializer):
-
+class GetTokenStatusSerializer(serializers.Serializer):
     invite_token = serializers.CharField(required=True)
 
     def validate(self, attrs: dict) -> dict:
-        get_object_or_404(InvitationToken, token=attrs["invite_token"], expired_at__gt=datetime.utcnow())
+        get_object_or_404(
+            InvitationToken,
+            token=attrs["invite_token"],
+            expired_at__gt=datetime.utcnow(),
+        )
         return attrs
 
     def create(self, validated_data: dict) -> User:
@@ -24,12 +29,14 @@ class UserAcceptInviteSerializer(serializers.Serializer):
         user = invitation_token.user
 
         if user.invite_status == UserInvitationStatusChoice.SUCCESS:
-            raise ValidationError({"invite_token": "Пользователь уже принял приглашение"})
+            raise ValidationError(
+                {"invite_token": "Пользователь уже принял приглашение"}
+            )
 
         return user
 
     def to_representation(self, instance: User):
-        return UserFullOutputSerializer(instance=instance).data
+        return UserAcceptInviteResponseSerializer(instance=instance).data
 
 
 class UserInviteSerializer(serializers.ModelSerializer):
@@ -38,30 +45,26 @@ class UserInviteSerializer(serializers.ModelSerializer):
         fields = ["first_name", "last_name", "email", "team", "role"]
 
     def create(self, validated_data: dict):
+        validated_data.update({"username": validated_data["email"]})
         user = super().create(validated_data)
-        user.username = validated_data["email"]
         return user
 
 
-class UserFullOutputSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = "__all__"
-
-
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password]
-    )
+class UserAcceptInviteSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    password = serializers.CharField()
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "email", "password", "team", "role"]
+        fields = ("id", "password")
 
-    def create(self, validated_data: dict) -> User:
-        username: str = validated_data["email"]
-        validated_data.update({"username": username})
-        user = User(**validated_data)
-        user.set_password(raw_password=validated_data["password"])
-        user.save()
-        return user
+    def update(self, instance: User, validated_data: dict):
+        instance = super().update(instance, validated_data)
+        instance.is_active = True
+        instance.invite_status = UserInvitationStatusChoice.SUCCESS
+        instance.set_password(validated_data["password"])
+        instance.save()
+        return instance
+
+    def to_representation(self, instance: User):
+        return UserAcceptInviteResponseSerializer(instance=instance).data

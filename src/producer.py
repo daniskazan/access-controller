@@ -11,7 +11,7 @@ EXCHANGE_NAME = "applicationsEvents"
 
 class EventType(str, Enum):
     APPLICATION_APPROVED = "applications.approved"
-    APPLICATION_RESOLVED = "applications.resolved"
+    GRANT_ACTIVATED = "grant.activated"
 
 
 class Producer:
@@ -26,14 +26,16 @@ class Producer:
         )
         self.channel = self.connection.channel()
         if not self.binded:
-            self.channel.exchange_declare(exchange=EXCHANGE_NAME, exchange_type=ExchangeType.direct)
+            self.channel.exchange_declare(
+                exchange=EXCHANGE_NAME, exchange_type=ExchangeType.direct
+            )
             self.channel.queue_declare(queue=EventType.APPLICATION_APPROVED)
-            self.channel.queue_declare(queue=EventType.APPLICATION_RESOLVED)
+            self.channel.queue_declare(queue=EventType.GRANT_ACTIVATED)
             self.channel.queue_bind(
                 queue=EventType.APPLICATION_APPROVED, exchange=EXCHANGE_NAME
             )
             self.channel.queue_bind(
-                queue=EventType.APPLICATION_RESOLVED, exchange=EXCHANGE_NAME
+                queue=EventType.GRANT_ACTIVATED, exchange=EXCHANGE_NAME
             )
             self.channel.close()
 

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0006_remove_grant_is_active_remove_grant_need_to_remove_and_more"),
     ]
