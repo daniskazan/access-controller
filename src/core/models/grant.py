@@ -2,6 +2,7 @@ from django.db import models
 
 from core.mixins import CreatedAtUpdatedAtMixin
 from core.enums.grant import GrantStatus
+from core.enums.application import ApplicationScopeChoice
 
 
 class Grant(CreatedAtUpdatedAtMixin, models.Model):
@@ -15,6 +16,7 @@ class Grant(CreatedAtUpdatedAtMixin, models.Model):
     application = models.OneToOneField(
         to="Application", on_delete=models.SET_NULL, null=True
     )
+    scope = models.CharField(choices=ApplicationScopeChoice.choices, null=False, default=ApplicationScopeChoice.READ_SCOPE)
 
     class Meta:
         verbose_name = "право доступа"

@@ -87,7 +87,7 @@ class GrantAdmin(admin.ModelAdmin):
                     routing_key=EventType.GRANT_ACTIVATED,
                     message=asdict(
                         GrantActivatedEvent(
-                            application_id=grant.application.pk, grant_id=grant.pk
+                            application_id=grant.application.pk,
                         )
                     ),
                 )

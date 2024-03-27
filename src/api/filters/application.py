@@ -21,6 +21,12 @@ class ApplicationFilter(filter.FilterSet):
             "user",
         )
 
+    @property
+    def qs(self) -> QuerySet:
+        qs = super().qs
+        current_user = getattr(self.request, "user")
+        return qs.filter(Q(confirm_by=current_user) | Q(user=current_user))
+
     def get_applications_to_confirm(
         self, queryset: QuerySet, field_name: Literal["confirm_by"], value: bool
     ):

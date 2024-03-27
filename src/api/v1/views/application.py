@@ -24,12 +24,11 @@ class ApplicationApprovedEvent:
     application_id: int
     user_id: int
     resource_id: int
-    status: int
+    scope: int
 
 
 @dataclass
 class GrantActivatedEvent:
-    grant_id: int
     application_id: int
 
 
@@ -76,7 +75,7 @@ class ApplicationViewSet(
                     user_id=application.user.pk,
                     application_id=application.pk,
                     resource_id=application.resource.pk,
-                    status=application.status,
+                    scope=application.scope,
                 )
             ),
         )

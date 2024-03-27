@@ -11,6 +11,7 @@ django.setup()
 
 from producer import EventType, EXCHANGE_NAME
 from core.consume import create_grant_to_proccess
+from core.consume import update_application_status_after_creating_grant
 
 
 class Consumer:
@@ -29,7 +30,7 @@ class Consumer:
                 queue=EventType.APPLICATION_APPROVED, exchange=EXCHANGE_NAME
             )
             self.channel.queue_bind(
-                queue=EventType.APPLICATION_RESOLVED, exchange=EXCHANGE_NAME
+                queue=EventType.GRANT_ACTIVATED, exchange=EXCHANGE_NAME
             )
 
     def callback_on_application_approved_status(
@@ -47,8 +48,17 @@ class Consumer:
             application_id=body["application_id"],
         )
 
-    def callback_on_application_resolved(self):
-        pass
+
+    def callback_on_grant_activated(
+            self,
+            ch: pika.BlockingConnection,
+            method: pika.spec.Basic,
+            properties,
+            body: bytes,
+    ):
+        body = json.loads(body)
+        update_application_status_after_creating_grant(application_id=body["application_id"])
+
 
     def run(self):
         self.channel.basic_consume(
@@ -57,8 +67,8 @@ class Consumer:
             auto_ack=True,
         )
         self.channel.basic_consume(
-            queue=EventType.APPLICATION_RESOLVED,
-            on_message_callback=self.callback_on_application_resolved,
+            queue=EventType.GRANT_ACTIVATED,
+            on_message_callback=self.callback_on_grant_activated,
             auto_ack=True,
         )
         self.channel.start_consuming()
