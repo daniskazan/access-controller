@@ -19,6 +19,13 @@ class Resource(CreatedAtUpdatedAtMixin, models.Model):
         "ResourceGroup", on_delete=models.CASCADE, related_name="resources"
     )
     name = models.CharField(max_length=256)
+    url = models.CharField(
+        help_text="URL ресурса(необходим если хотите выполнять команды, например отправлять запросы в БД)",
+        null=True,
+    )
+    commands = models.ManyToManyField(
+        "CommandPattern", related_name="resource_commands"
+    )
 
     def __str__(self):
         return f"{self.__class__.__name__} - {self.name}"

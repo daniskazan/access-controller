@@ -16,7 +16,11 @@ class Grant(CreatedAtUpdatedAtMixin, models.Model):
     application = models.OneToOneField(
         to="Application", on_delete=models.SET_NULL, null=True
     )
-    scope = models.CharField(choices=ApplicationScopeChoice.choices, null=False, default=ApplicationScopeChoice.READ_SCOPE)
+    scope = models.IntegerField(
+        choices=ApplicationScopeChoice.choices,
+        null=False,
+        default=ApplicationScopeChoice.READ_SCOPE,
+    )
 
     class Meta:
         verbose_name = "право доступа"

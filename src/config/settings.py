@@ -12,8 +12,8 @@ EMAIL_BACKEND = os.environ.get(
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.yandex.ru")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", 465)
 EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", True)
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", None)
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", None)
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "jelly979@yandex.ru")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "lbsopnrdzqyndgik")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -25,6 +25,7 @@ SECRET_KEY = "django-insecure-$*iw&-n55a0mz0mv=5n@124-84g5yo2ck!=&yo!i&il91c52xs
 DEBUG = os.environ.get("DEBUG", True)
 
 ALLOWED_HOSTS = ["*"]
+CORS_ALLOW_ALL_ORIGINS = True
 
 RABBITMQ_SETTINGS = {
     "HOST": os.environ.get("RABBITMQ_HOST", "localhost"),
@@ -100,11 +101,13 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "drf_spectacular",
     "rest_framework_simplejwt",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

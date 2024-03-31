@@ -10,8 +10,8 @@ def create_grant_to_proccess(*, user_id: int, resource_id: int, application_id: 
 
 
 def update_application_status_after_creating_grant(
-        *,
-        application_id: int,
+    *,
+    application_id: int,
 ) -> None:
     application = Application.objects.filter(pk=application_id).first()
     application.status = ApplicationStatusChoice.RESOLVED

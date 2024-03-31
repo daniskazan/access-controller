@@ -3,6 +3,7 @@ from typing import Literal
 from django.db.models import QuerySet, Q
 from django_filters import rest_framework as filter
 
+from core.enums.application import ApplicationStatusChoice
 from core.models import Application
 
 
@@ -31,5 +32,8 @@ class ApplicationFilter(filter.FilterSet):
         self, queryset: QuerySet, field_name: Literal["confirm_by"], value: bool
     ):
         if value:
-            return queryset.filter(Q(confirm_by=self.request.user))
+            return queryset.filter(
+                Q(confirm_by=self.request.user)
+                & Q(status=ApplicationStatusChoice.IN_PROCESS)
+            )
         return queryset
