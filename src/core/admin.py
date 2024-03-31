@@ -123,41 +123,27 @@ class GrantAdmin(admin.ModelAdmin):
     send_message.short_description = "Отправить сообщение"
 
     def activate_db_grant(self, request: HttpRequest, queryset: QuerySet[Grant]):
-        form = None
         grant = queryset.first()
         if "apply" in request.POST:
-            commands_list = grant.resource.commands.all()
             form = ActivateGrantForm(request.POST)
-            form_is_valid = form.is_valid()
-
-            if form_is_valid:
-                if len(queryset) > 1:
-                    self.message_user(
-                        request, messages.ERROR, "Надо выбрать только одного получателя"
-                    )
-                    return HttpResponseRedirect(request.get_full_path())
-                if not commands_list:
-                    self.message_user(
-                        request, "Добавьте скрипты в ресурс", messages.ERROR
-                    )
-                    return HttpResponseRedirect(request.get_full_path())
-
+            if form.is_valid():
                 cd = form.cleaned_data
                 db = DatabaseCommandExecutor(running_script=cd["command"], grant=grant)
                 try:
                     db.execute()
-                except Exception:
-                    self.message_user(request, "Произошла ошибка", messages.ERROR)
+                    # Теперь все в порядке, перенаправляем пользователя на ту же страницу
+                    self.message_user(request, "Успешно", messages.SUCCESS)
                     return HttpResponseRedirect(request.get_full_path())
+                except Exception as e:
+                    self.message_user(
+                        request, f"Произошла ошибка: {e.args}", messages.ERROR
+                    )
 
-                # Now everything OK
-                self.message_user(request, "Успешно", messages.SUCCESS)
-                return HttpResponseRedirect(request.get_full_path())
-
-        if not form:
-            form = ActivateGrantForm(
-                initial={"_selected_action": request.POST.getlist(ACTION_CHECKBOX_NAME)}
-            )
+        # Если запрос не POST или форма не валидна, вернем пустую форму
+        form = ActivateGrantForm(
+            initial={"_selected_action": request.POST.getlist(ACTION_CHECKBOX_NAME)}
+        )
+        # Возвращаем шаблон с формой
         return render(
             request,
             "mailing/activate_grant.html",
