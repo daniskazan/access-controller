@@ -24,6 +24,7 @@ from api.v1.serializers.response.user import (
     UserFullOutputSerializer,
 )
 from core.services.user import UserInviteService
+from core.utils import get_host
 
 
 class UserViewSet(
@@ -103,3 +104,9 @@ class UserViewSet(
             data=UserFullOutputSerializer(instance=request.user).data,
             status=status.HTTP_200_OK,
         )
+
+    @action(methods=["get"], detail=False)
+    def tmp(self, request):
+        admin_link = get_host(request, with_protocol=True) + "/admin"
+        print(admin_link)
+        return Response()

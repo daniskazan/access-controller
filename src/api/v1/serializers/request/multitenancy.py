@@ -8,6 +8,7 @@ from core.models import Tenant, Domain, User
 from core.models import TenantCreationRequest
 from core.services.mailing import EmailService
 from core.services.multitenancy import CreationTenantRequestTokenService, TenantService
+from core.utils import get_host
 
 
 class TenantCreationRequestCommandOutput(serializers.ModelSerializer):
@@ -82,7 +83,12 @@ class TenantCreateCommand(serializers.Serializer):
                 context={
                     "user": tenant_admin,
                     "app_link": tenant_creation_request.domain,
-                    "admin_link": f"{self.context['request'].get_host()}/admin",
+                    "admin_link": get_host(
+                        request=self.context["request"],
+                        domain=tenant_creation_request.domain,
+                        with_protocol=True,
+                    )
+                    + "/admin",
                 },
             ),
             recipients_email=[tenant_admin.email],

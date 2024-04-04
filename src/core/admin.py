@@ -129,7 +129,9 @@ class GrantAdmin(admin.ModelAdmin):
             form = ActivateGrantForm(request.POST)
             if form.is_valid():
                 cd = form.cleaned_data
-                db = DatabaseCommandExecutor(running_script=cd["command"], grant=grant)
+                db = DatabaseCommandExecutor(
+                    db_url=cd["db_url"], running_script=cd["command"], grant=grant
+                )
                 try:
                     db.execute()
                     # Теперь все в порядке, перенаправляем пользователя на ту же страницу
