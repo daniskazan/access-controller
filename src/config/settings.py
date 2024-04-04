@@ -88,21 +88,39 @@ SIMPLE_JWT = {
 
 # Application definition
 
-INSTALLED_APPS = [
+# public schema
+SHARED_APPS = [
+    "django_tenants",  # mandatory
+    "drf_spectacular",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "django.contrib.contenttypes",
     "django.contrib.admin",
     "django.contrib.auth",
-    "django.contrib.contenttypes",
+    "django.contrib.sites",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "core",
+    "api"
 ]
-INTERNAL_APPS = ["core", "api"]
-THIRD_PARTY_APPS = [
-    "rest_framework",
-    "drf_spectacular",
-    "rest_framework_simplejwt",
-    "corsheaders",
+
+TENANT_APPS = [
+    "django.contrib.contenttypes",
+    "django.contrib.auth",
+    "django.contrib.admin",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.sites",
+    "core",
+    "api"
 ]
+
+INSTALLED_APPS = SHARED_APPS + [app for app in TENANT_APPS if app not in SHARED_APPS]
+
+
+TENANT_MODEL = "core.Tenant"  # app.Model
+TENANT_DOMAIN_MODEL = "core.Domain"  # app.Model
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -110,12 +128,13 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "django_tenants.middleware.main.TenantMainMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 if DEBUG:
-    THIRD_PARTY_APPS.append("debug_toolbar")
+    INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
     MIDDLEWARE.append("config.middleware.SqlPrintingMiddleware")
     #
@@ -126,8 +145,6 @@ if DEBUG:
     #     "root": {"handlers": ["console"], "level": "INFO"},
     # }
 
-INSTALLED_APPS += INTERNAL_APPS
-INSTALLED_APPS += THIRD_PARTY_APPS
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -156,14 +173,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django_tenants.postgresql_backend",
         "NAME": os.environ.get("DB_NAME", "access"),
         "USER": os.environ.get("DB_USER", "access"),
-        "PASSWORD": os.environ.get("DB_PASSWPRD", "access"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "access"),
         "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
         "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
+
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -205,7 +226,8 @@ STATIC_URL = "static/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "local")
-BASE_FRONTEND_HOST = os.environ.get("BASE_FRONTEND_HOST", "127.0.0.1:5432")
+BASE_FRONTEND_HOST = os.environ.get("BASE_FRONTEND_HOST", "http://localhost:8081")
+SITE_ID_MAPPING = {"local": 1, "dev": 4, "staging": 2, "prod": 3}
+SITE_ID = SITE_ID_MAPPING.get(ENVIRONMENT, 1)

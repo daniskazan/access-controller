@@ -75,6 +75,7 @@ class GrantAdmin(admin.ModelAdmin):
         "id",
         "status",
         "user",
+        "scope",
         "resource",
     )
     list_filter = ("status", "resource__resource_group")

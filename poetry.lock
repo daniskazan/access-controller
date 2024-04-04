@@ -310,6 +310,19 @@ files = [
 ]
 
 [[package]]
+name = "django-tenants"
+version = "3.6.1"
+description = "Tenant support for Django using PostgreSQL schemas."
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-tenants-3.6.1.tar.gz", hash = "sha256:36052d5bfce8240afab062e2d33ffeb25e38fa57b2a2b003eacd7e8d60334d97"},
+]
+
+[package.dependencies]
+Django = ">=2.1,<5.1"
+
+[[package]]
 name = "djangorestframework"
 version = "3.14.0"
 description = "Web APIs for Django, made easy."
@@ -1739,4 +1752,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ad0d632bd93108c2911026ae13e640904b8a4250e9d9a51e13b9cec6567f862a"
+content-hash = "cfa67d36118f1055dfb64908a8f265c27d9e4ca9b363728bed57a7c7c7221956"

@@ -36,7 +36,7 @@ class UserViewSet(
         return User.objects.prefetch_related("team", "role", "position").order_by("id")
 
     def get_permissions(self):
-        if self.action in ("get_invite_token_status", "accept_invite", "invite"):
+        if self.action in ("get_invite_token_status", "accept_invite", "invite", "tmp"):
             return [AllowAny()]
         return [IsAuthenticated()]
 

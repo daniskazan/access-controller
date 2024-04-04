@@ -1,4 +1,5 @@
 from .invitation_token import InvitationToken
+from .multitenancy import TenantCreationRequest, Tenant, Domain
 from .user import User
 from .user_role import UserRole
 from .position import Position
@@ -19,4 +20,7 @@ __all__ = [
     "Grant",
     "InvitationToken",
     "CommandPattern",
+    "TenantCreationRequest",
+    "Tenant",
+    "Domain",
 ]

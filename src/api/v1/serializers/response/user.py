@@ -39,6 +39,7 @@ class UserFullOutputSerializer(serializers.ModelSerializer):
     updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     position = serializers.ReadOnlyField(source="position.name")
     role = serializers.ReadOnlyField(source="role.name")
+    full_name = serializers.CharField()
     team = TeamSerializer()
 
     class Meta:

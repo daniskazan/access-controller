@@ -4,6 +4,7 @@ participant Frontend
 participant ApplicationDjangoBackend
 database ApplicationDB
 queue RabbitMQ
+participant ApplicationApprovedEventConsumer
 autonumber
 
 == Create Application Process ==
@@ -27,9 +28,12 @@ end
 alt result=True
 Frontend -> ApplicationDjangoBackend: HTTP: PATCH /confirm/<applicationID>
 ApplicationDjangoBackend --> ApplicationDjangoBackend: Check User Permissions
-ApplicationDjangoBackend --> ApplicationDB: << Update Application  Status>>
-ApplicationDB --> ApplicationDjangoBackend: << Updated Application >>
-ApplicationDjangoBackend --> RabbitMQ: <<create ApplicationApprovedEvent>>
+ApplicationDjangoBackend --> ApplicationDjangoBackend: << Update Application  Status>>
+ApplicationDjangoBackend --> ApplicationDB: << Save Application >>
+ApplicationDB --> ApplicationDjangoBackend: <<OK>>
+ApplicationDjangoBackend --> RabbitMQ: <<send ApplicationApprovedEvent>>
+ApplicationApprovedEventConsumer --> RabbitMQ: << creates Grant: status: PENDING>>
+ApplicationApprovedEventConsumer --> ApplicationDjangoBackend: <<OK>>
 ApplicationDjangoBackend -> Frontend: HTTP 200
 end
 alt result=False
