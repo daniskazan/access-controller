@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Добро пожаловать в Access Controller!</title>
+    <style>
+        body {
+            background-color: #777777; /* Серый фон */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff; /* Белый фон контейнера */
+            border-radius: 20px; /* Округление углов */
+            padding: 20px;
+            max-width: 400px;
+            width: 80%;
+        }
+        .welcome-message {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-message">
+            Добро пожаловать, {{ user.first_name }}
+        </div>
+        <p>Начинаем работу 🚀</p>
+        <a class="btn btn-primary" href={{ app_link }} role="button">  Начать работу</a>
+        <a class="btn btn-primary" href={{ admin_link }} role="button">  Страница администрирования</a>
+    </div>
+</body>
+</html>
