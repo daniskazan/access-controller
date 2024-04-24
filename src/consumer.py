@@ -48,17 +48,18 @@ class Consumer:
             application_id=body["application_id"],
         )
 
-
     def callback_on_grant_activated(
-            self,
-            ch: pika.BlockingConnection,
-            method: pika.spec.Basic,
-            properties,
-            body: bytes,
+        self,
+        ch: pika.BlockingConnection,
+        method: pika.spec.Basic,
+        properties,
+        body: bytes,
     ):
         body = json.loads(body)
         print("callback_on_grant_activated", body)
-        update_application_status_after_creating_grant(application_id=body["application_id"])
+        update_application_status_after_creating_grant(
+            application_id=body["application_id"]
+        )
 
     def run(self):
         self.channel.basic_consume(

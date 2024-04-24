@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from api.v1.views.application import GrantActivatedEvent
+from bot.logic.notifier import TelegramBotNotifier
 from core.forms.admin_user import SendMessageForm
 from core.forms.admin_grant import ActivateGrantForm
 
@@ -93,10 +94,14 @@ class GrantAdmin(admin.ModelAdmin):
                     return HttpResponseRedirect(request.get_full_path())
 
                 grant: Grant = queryset.first()
+                subject = f"Access for {grant.resource.name} is active."
                 EmailService.send_email(
-                    subject=f"Access for {grant.resource.name} is active.",
+                    subject=subject,
                     message=message,
                     recipients_email=[grant.user.email],
+                )
+                TelegramBotNotifier(tenant=request.tenant).notify(
+                    user=grant.user, message=f"{subject}. Check your email."
                 )
                 producer.publish(
                     routing_key=EventType.GRANT_ACTIVATED,

@@ -102,7 +102,7 @@ SHARED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core",
-    "api"
+    "api",
 ]
 
 TENANT_APPS = [
@@ -113,7 +113,7 @@ TENANT_APPS = [
     "django.contrib.messages",
     "django.contrib.sites",
     "core",
-    "api"
+    "api",
 ]
 
 INSTALLED_APPS = SHARED_APPS + [app for app in TENANT_APPS if app not in SHARED_APPS]
@@ -178,13 +178,11 @@ DATABASES = {
         "USER": os.environ.get("DB_USER", "access"),
         "PASSWORD": os.environ.get("DB_PASSWORD", "access"),
         "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+        "PORT": os.environ.get("DB_PORT", "5434"),
     }
 }
 
-DATABASE_ROUTERS = (
-    'django_tenants.routers.TenantSyncRouter',
-)
+DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -231,3 +229,4 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT", "local")
 BASE_FRONTEND_HOST = os.environ.get("BASE_FRONTEND_HOST", "http://localhost:8081")
 SITE_ID_MAPPING = {"local": 1, "dev": 4, "staging": 2, "prod": 3}
 SITE_ID = SITE_ID_MAPPING.get(ENVIRONMENT, 1)
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "changeMe")

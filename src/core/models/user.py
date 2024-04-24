@@ -30,6 +30,9 @@ class User(mixins.CreatedAtUpdatedAtMixin, AbstractUser):
         choices=UserInvitationStatusChoice.choices,
         default=UserInvitationStatusChoice.PENDING,
     )
+    telegram_id = models.IntegerField(
+        verbose_name="ID в телеграме", null=True, blank=True
+    )
     is_tenant_admin = models.BooleanField(default=False)
 
     class Meta:

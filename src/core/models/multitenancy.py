@@ -24,6 +24,12 @@ class Tenant(TenantMixin, CreatedAtUpdatedAtMixin):
     admin_email = models.EmailField(
         verbose_name=_("Email админа тенанта"), default=None, null=True, blank=True
     )
+    telegram_bot_token = models.CharField(
+        max_length=46,
+        help_text="Read more: https://core.telegram.org/bots#3-how-do-i-create-a-bot",
+        null=True,
+        blank=True,
+    )
 
     # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True
