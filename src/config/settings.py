@@ -20,7 +20,7 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "lbsopnrdzqyndgik")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-$*iw&-n55a0mz0mv=5n@124-84g5yo2ck!=&yo!i&il91c52xs"
-
+SECRET = os.environ.get("SECRET", "2CDIErpEb_40xYX6YH2OS-Q2lUPWKrmh_SdEiDbx_cI=")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", True)
 

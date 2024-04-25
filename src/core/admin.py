@@ -25,6 +25,7 @@ from core.models import CommandPattern
 from core.services.grant import DatabaseCommandExecutor
 from core.services.mailing import EmailService
 from producer import producer, EventType
+from utils.security.hasher import Hashing
 
 
 @admin.register(CommandPattern)
@@ -170,11 +171,20 @@ class PositionAdmin(admin.ModelAdmin):
 
 @admin.register(Resource)
 class ResourceAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "name",
-        "resource_group",
-    )
+    list_display = ("id", "name", "resource_group", "get_resource_url")
+    readonly_fields = ("created_at", "updated_at")
+
+    def get_resource_url(self, obj: Resource):
+        if obj.resource_url:
+            return Hashing.decrypt(obj.resource_url)
+        return None
+
+    get_resource_url.short_description = "Resource url"
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("resource_url",)
+        return self.readonly_fields
 
 
 admin.site.register(UserRole)

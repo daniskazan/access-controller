@@ -24,6 +24,7 @@ sqlalchemy = "^2.0.29"
 django-tenants = "^3.6.1"
 pyjwt = "^2.8.0"
 python-telegram-bot = "^21.1"
+cryptography = "^42.0.5"
 
 
 [build-system]
